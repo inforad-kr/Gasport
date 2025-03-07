@@ -2,25 +2,25 @@
 
 ## Connections
 
-MAX3232 | ESP32
+MAX3232 | STM32
 --------|--------
 GND     | GND
-RXD     | GPIO18 (RX1)
-TXD     | GPIO19 (TX1)
+RXD     | PA10 (RX)
+TXD     | PA9 (TX)
 VCC     | 5V
 
-SSD1306 | ESP32
+SSD1306 | STM32
 --------|--------
 GND     | GND
 VCC     | 3.3V
-SCL     | GPIO22
-SDA     | GPIO21
+SCL     | PB8
+SDA     | PB9
 
-Micro SD | ESP32
+Micro SD | STM32
 ---------|--------
-CS       | GPIO15
-SCK      | GPIO14
-MOSI     | GPIO13
-MISO     | GPIO27
+CS       | PB6
+SCK      | PA5
+MOSI     | PA7
+MISO     | PA6
 VCC      | 5V
 GND      | GND
