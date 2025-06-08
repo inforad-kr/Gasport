@@ -1,12 +1,18 @@
-#include <SD.h>
+#include <SdFat.h>
 
 class Storage
 {
     String m_rootPath;
     SPIClass m_spi;
+    SdCsPin_t m_sdCsPin;
+    SdFat m_sd;
 
 public:
-    Storage(String rootPath) { m_rootPath = rootPath; }
+    Storage(String rootPath, uint32_t sdClkPin, uint32_t sdMisoPin, uint32_t sdMosiPin, uint32_t sdCsPin) : m_spi{sdMosiPin, sdMisoPin, sdClkPin, sdCsPin}
+    {
+        m_rootPath = rootPath;
+        m_sdCsPin = sdCsPin;
+    }
     void setup();
     void traceLog(String fileName, uint64_t timestamp, String text);
     void printFileNames(Stream &outputStream);

@@ -1,23 +1,20 @@
 #include <Arduino.h>
-#include <BluetoothSerial.h>
 #include "Storage.h"
 #include "DavcGauge.h"
 #include "OledDisplay.h"
 #include "Command.h"
 #include "deviceConfig.h"
 
-BluetoothSerial btSerial;
-Storage storage("/");
-DavcGauge gauge(1);
+Storage storage("/", sdClkPin, sdMisoPin, sdMosiPin, sdCsPin);
+DavcGauge gauge(1, gaugeRxPin, gaugeTxPin);
 OledDisplay display(displayWidth, displayHeight);
 
 void setup()
 {
     Serial.begin(115200);
-    btSerial.begin(deviceName);
 
     storage.setup();
-    gauge.setup(gaugeRxPin, gaugeTxPin);
+    gauge.setup();
     display.setup();
 }
 
@@ -33,7 +30,6 @@ void runCommand(Stream &stream);
 void loop()
 {
     runCommand(Serial);
-    runCommand(btSerial);
 
     updateTimeLong += millis() - updateTime;
     updateTime = updateTimeLong;
