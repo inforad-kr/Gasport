@@ -2,9 +2,9 @@
 #include "SerialGauge.h"
 #include "globals.h"
 
-void SerialGauge::setup(int baud, int8_t rxPin, int8_t txPin)
+void SerialGauge::setup(int baud)
 {
-    m_serial.begin(baud, SERIAL_8N1, rxPin, txPin);
+    m_serial.begin(baud);
     m_serial.setTimeout(100);
 }
 

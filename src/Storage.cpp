@@ -1,13 +1,12 @@
 #include <Arduino.h>
 #include "Storage.h"
 #include "globals.h"
-#include "deviceConfig.h"
 
 void Storage::setup()
 {
-    m_spi.begin(sdClkPin, sdMisoPin, sdMosiPin, sdCsPin);
+    m_spi.begin();
 
-    if (SD.begin(sdCsPin, m_spi))
+    if (m_sd.begin(m_sdCsPin, SD_SCK_MHZ(25)))
     {
         Serial.println("SD card mounted");
     }
@@ -19,7 +18,7 @@ void Storage::setup()
 
 void Storage::traceLog(String fileName, uint64_t timestamp, String text)
 {
-    File file = SD.open(m_rootPath + fileName, FILE_APPEND);
+    File file = m_sd.open(m_rootPath + fileName, O_RDWR | O_CREAT | O_AT_END);
     if (file)
     {
         String prefix = timestampToString(timestamp) + ",";
@@ -55,7 +54,7 @@ String Storage::hmsToString(int value)
 
 void Storage::printFileNames(Stream &outputStream)
 {
-    File dir = SD.open(m_rootPath);
+    File dir = m_sd.open(m_rootPath);
     if (dir)
     {
         while (true)
@@ -65,7 +64,9 @@ void Storage::printFileNames(Stream &outputStream)
             {
                 if (!file.isDirectory())
                 {
-                    outputStream.println(file.name());
+                    char name[64];
+                    file.getName(name, sizeof(name));
+                    outputStream.println(name);
                 }
                 file.close();
             }
@@ -80,7 +81,7 @@ void Storage::printFileNames(Stream &outputStream)
 
 void Storage::readFile(String fileName, Stream &outputStream)
 {
-    File file = SD.open(m_rootPath + fileName);
+    File file = m_sd.open(m_rootPath + fileName);
     if (file)
     {
         if (!file.isDirectory())
@@ -96,12 +97,12 @@ void Storage::readFile(String fileName, Stream &outputStream)
 
 void Storage::removeFile(String fileName)
 {
-    File file = SD.open(m_rootPath + fileName);
+    File file = m_sd.open(m_rootPath + fileName);
     if (file)
     {
         if (!file.isDirectory())
         {
-            SD.remove(file.path());
+            m_sd.remove(m_rootPath + fileName);
         }
         file.close();
     }
